@@ -1,21 +1,44 @@
 /**
- *  Somfy Shades
+ * 
+ * https://community.smartthings.com/t/my-somfy-smartthings-integration/13492
+ * Modified ERS 12/29/2016
  *
- *  Copyright 2018 others
+ * Version 1.0.7
  *
- *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License. You may obtain a copy of the License at:
+ * Version History
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * 1.0.7    26 Mar 2017		Few updates  (be sure to go into each device, select settings (gear), and hit done
+ * 1.0.6    29 Dec 2016		Health Check
+ * 1.0.5    01 May 2016		bug fixes
+ * 1.0.4    01 May 2016		Sync commands for cases where blinds respond to multiple channels (all vs. single)
+ * 1.0.3    17 Apr 2016		Expanded runIn timer for movement and  completed states
+ * 1.0.2    04 Apr 2016		Added runIn timer for movement vs. completed states
+ * 1.0.1    07 Mar 2016		Add Blinds support by edit device to set to blinds type
+ * 1.0.0    24 Feb 2016		Multi-tile, Window Shade Capability, Device Handler attempts to maintain state
  *
- *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
- *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
- *  for the specific language governing permissions and limitations under the License.
+ * Notes:
+ *
+ * Somfy ZRTSII does not report accurate status for the device.
+ *
+ * This device handler maintains an internal view of device status based on last command
+ * reissuing a command to the shade (up, down, preset (when stopped)) does not move the shade/blinds if it is already in that position
+ * My/stop command does different actions depending if the shade is idle (go to MY or closed position) or moving (stop)
+ *
+ * Once the device is installed, it defaults to "shade" operation.  If "blinds" operation is desired, for the device go to settings (gear)
+ * and change the device operation to Window Blinds
+ *
+ *	Shade and Blinds operate differently in ZRTSII buttons
+ *	- Shades actions: up button: open (on switch),  down button: close (off switch),       my/stop button: presetPosition (50%)
+ *	- Blinds actions: up button: open (on switch),  down button: tilt open (off switch),   my/stop button: close (50%)
+ *
+ * Window Shade Capability standardizes:  (these should not be changed, except by SmartThings capabilities updates)
+ *	- windowShade: unknown, closed, open, partially open, closing, opening 
+ *	- Commands:  open(), close(), presetPosition()
  *
  */
-metadata {
-	definition (name: "Somfy Shades", namespace: "spikenheimer", author: "spike k", vid: "generic-shade") {
-	  capability "Switch Level"
+  metadata {
+    definition (name: "somfy-shades", namespace: "imnotbob", author: "Eric, Ash, Others", vid: "generic-shade") {
+        capability "Switch Level"
         capability "Switch"
         capability "Window Shade"
         //capability "Polling"
@@ -43,7 +66,7 @@ metadata {
         status "33%": "command: 2003, payload: 21"
         status "66%": "command: 2003, payload: 42"
         status "99%": "command: 2003, payload: 63"
-
+        
         // reply messages
         reply "2001FF,delay 5000,2602": "command: 2603, payload: FF"
         reply "200100,delay 5000,2602": "command: 2603, payload: 00"
@@ -232,7 +255,7 @@ def zwaveEvent(physicalgraph.zwave.commands.basicv1.BasicReport cmd)
     def swstatstr = "${device.latestValue('switch')}"
     if (cmd.value == 0 && swstatstr == "on") { statstr = "DIFFERENT" }
     if (cmd.value == 0xFF && swstatstr == "off") { statstr = "DIFFERENT" }
-
+        
     //log.debug "${statstr} Zwave state is ${tempstr}; device stored state is ${device.latestValue('switch')} dimmer level: ${device.latestValue('level')} "
     return result
 }
@@ -242,7 +265,7 @@ def zwaveEvent(physicalgraph.zwave.commands.switchbinaryv1.SwitchBinaryReport cm
     def tempstr = ""
 
     log.debug "SwitchBinaryReport cmd.value:  ${cmd.value}"
-
+    
     if (cmd.value == 0) {
         tempstr = "closed"
         if (settings?.shadeType) {
@@ -258,7 +281,7 @@ def zwaveEvent(physicalgraph.zwave.commands.switchbinaryv1.SwitchBinaryReport cm
         tempstr="neither open or closed"
     }
     log.debug "Reported state is ${tempstr}; device is ${device.latestValue('switch')}  ${device.latestValue('level')} "
-
+    
     //result << createEvent(name:"switch", value: cmd.value ? "on" : "off")
     //result << createEvent(name: "level",value: cmd.value, unit:"%",
         //descriptionText:"${device.displayName} dimmed ${cmd.value==255 ? 100 : cmd.value}%")
@@ -271,7 +294,7 @@ def zwaveEvent(physicalgraph.zwave.commands.switchmultilevelv1.SwitchMultilevelR
     def tempstr = ""
 
     log.trace "SwitchMultilevelReport cmd.value:  ${cmd.value}"
-
+    
     if (cmd.value == 0) {
         //result << createEvent(name: "switch", value: "off")
         tempstr = "closed"
@@ -297,18 +320,18 @@ def zwaveEvent(physicalgraph.zwave.commands.switchmultilevelv1.SwitchMultilevelR
 def on() {
     int level = 100
     log.trace "on() treated as open()"
-    setLevel(level)
+    setLevel(level) 
 }
 
 def off() {
     int level = 0
     log.trace "off() treated as close()"
-    setLevel(level)
+    setLevel(level) 
 }
 
 def setLevel() {
     log.trace "setLevel() treated as preset position"
-    setLevel(50)
+    setLevel(50) 
 }
 
 def open() {
@@ -429,7 +452,7 @@ def setLevel(level) {
         // this code below causes commands not be sent/received by the Somfy ZRTSII - I assume delayBetween is asynchronous...
 
         //log.trace("finished level adjust")
-        //if (newlevel != level) {
+        //if (newlevel != level) { 
             //log.trace("finished level adjust1")
             //delayBetween([
                 //sendEvent(name: "level", value: newlevel)
