@@ -24,7 +24,7 @@
  
  */
 metadata {
-	definition (name: "Aeon SmartStrip SPK", namespace: "spikenheimer", author: "lgkapps") {
+	definition (name: "Aeon SmartStrip SPK", namespace: "spikenheimer", author: "spike k/lgkapps") {
 		capability "Switch"
 		capability "Energy Meter"
 		capability "Power Meter"
