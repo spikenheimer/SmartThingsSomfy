@@ -109,7 +109,7 @@ preferences {
 		}
 	
 			standardTile("switch1", "switch1", canChangeIcon: true, width: 2, height: 2) {
-				state "on", label: '${name}', action: "off1", icon: "st.switches.switch.on", backgroundColor: "#79b821"
+				state "on", label: '${name}', action: "off1", icon: "st.switches.switch.on", backgroundColor: "#00a0dc"
 				state "off", label: '${name}', action: "on1", icon: "st.switches.switch.off", backgroundColor: "#ffffff"
 			}
 			valueTile("power1", "power1",  width: 2, height: 2, decoration: "flat") {
@@ -119,7 +119,7 @@ preferences {
 				state "default", label:'${currentValue} kWh'
 			}
 		standardTile("switch2", "switch2", width: 2, height: 2, canChangeIcon: true) {
-				state "on", label: '${name}', action: "off2", icon: "st.switches.switch.on", backgroundColor: "#79b821"
+				state "on", label: '${name}', action: "off2", icon: "st.switches.switch.on", backgroundColor: "#00a0dc"
 				state "off", label: '${name}', action: "on2", icon: "st.switches.switch.off", backgroundColor: "#ffffff"
 			}
 			valueTile("power2", "power2", width: 2, height: 2, decoration: "flat") {
@@ -129,7 +129,7 @@ preferences {
 				state "default", label:'${currentValue} kWh'
 			}
 		standardTile("switch3", "switch3", width: 2, height: 2, canChangeIcon: true) {
-				state "on", label: '${name}', action: "off3", icon: "st.switches.switch.on", backgroundColor: "#79b821"
+				state "on", label: '${name}', action: "off3", icon: "st.switches.switch.on", backgroundColor: "#00a0dc"
 				state "off", label: '${name}', action: "on3", icon: "st.switches.switch.off", backgroundColor: "#ffffff"
 			}
 			valueTile("power3", "power3", width: 2, height: 2, decoration: "flat") {
@@ -140,7 +140,7 @@ preferences {
 			}
 		
         	standardTile("switch4", "switch4", width: 2, height: 2, canChangeIcon: true) {
-				state "on", label: '${name}', action: "off4", icon: "st.switches.switch.on", backgroundColor: "#79b821"
+				state "on", label: '${name}', action: "off4", icon: "st.switches.switch.on", backgroundColor: "#00a0dc"
 				state "off", label: '${name}', action: "on4", icon: "st.switches.switch.off", backgroundColor: "#ffffff"
 			}
 			valueTile("power4", "power4", width: 2, height: 2, decoration: "flat") {
